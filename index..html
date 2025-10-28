@@ -1,0 +1,4641 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FotoFunnel Training Course - Content Moderation</title>
+
+    <script src="/_sdk/data_sdk.js"></script>
+
+    <script src="/_sdk/element_sdk.js"></script>
+
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js></script>
+
+    <style>
+        body {
+
+            box-sizing: border-box;
+
+            margin: 0;
+
+            padding: 0;
+
+            font-family: 'Orbitron', 'Arial', sans-serif;
+
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+
+            color: #e0e0e0;
+
+            min-height: 100%;
+
+            overflow-x: hidden;
+
+            position: relative;
+
+        }
+
+
+
+        .ai-background {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.1) 0%, transparent 50%);
+
+            z-index: -2;
+
+        }
+
+
+
+        .data-streams {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            z-index: -1;
+
+            opacity: 0.3;
+
+        }
+
+
+
+        .stream {
+
+            position: absolute;
+
+            width: 2px;
+
+            height: 100px;
+
+            background: linear-gradient(to bottom, transparent, #8a2be2, transparent);
+
+            animation: stream-flow 3s linear infinite;
+
+        }
+
+
+
+        @keyframes stream-flow {
+
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+
+        }
+
+
+
+        .container {
+
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+            padding: 20px;
+
+            position: relative;
+
+            z-index: 1;
+
+        }
+
+
+
+        .header {
+
+            text-align: center;
+
+            margin-bottom: 30px;
+
+            position: relative;
+
+        }
+
+
+
+        .ai-orb {
+
+            width: 80px;
+
+            height: 80px;
+
+            border-radius: 50%;
+
+            background: radial-gradient(circle, #8a2be2, #4b0082);
+
+            margin: 0 auto 20px;
+
+            position: relative;
+
+            animation: pulse 2s ease-in-out infinite;
+
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.6);
+
+        }
+
+
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+        }
+
+
+
+        .game-title {
+
+            font-size: 3rem;
+
+            font-weight: bold;
+
+            background: linear-gradient(45deg, #8a2be2, #c0c0c0);
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+
+            background-clip: text;
+
+            margin-bottom: 10px;
+
+            text-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+
+        }
+
+
+
+        .subtitle {
+
+            font-size: 1.2rem;
+
+            color: #c0c0c0;
+
+            margin-bottom: 30px;
+
+        }
+
+
+
+        .screen {
+
+            background: rgba(0, 0, 0, 0.8);
+
+            border: 2px solid #8a2be2;
+
+            border-radius: 15px;
+
+            padding: 30px;
+
+            margin-bottom: 20px;
+
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
+
+            backdrop-filter: blur(10px);
+
+        }
+
+
+
+        .level-selection {
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+            gap: 20px;
+
+            margin: 30px 0;
+
+        }
+
+
+
+        .level-card {
+
+            background: rgba(138, 43, 226, 0.1);
+
+            border: 2px solid #8a2be2;
+
+            border-radius: 15px;
+
+            padding: 25px;
+
+            text-align: center;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .level-card:hover {
+
+            transform: translateY(-5px);
+
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.4);
+
+            border-color: #c0c0c0;
+
+        }
+
+
+
+        .level-card.locked {
+
+            opacity: 0.5;
+
+            cursor: not-allowed;
+
+        }
+
+
+
+        .level-card.locked:hover {
+
+            transform: none;
+
+            box-shadow: none;
+
+        }
+
+
+
+        .level-icon {
+
+            font-size: 3rem;
+
+            margin-bottom: 15px;
+
+            display: block;
+
+        }
+
+
+
+        .level-title {
+
+            font-size: 1.5rem;
+
+            font-weight: bold;
+
+            color: #8a2be2;
+
+            margin-bottom: 10px;
+
+        }
+
+
+
+        .level-description {
+
+            color: #c0c0c0;
+
+            margin-bottom: 15px;
+
+        }
+
+
+
+        .level-stats {
+
+            display: flex;
+
+            justify-content: space-around;
+
+            margin-top: 15px;
+
+            font-size: 0.9rem;
+
+        }
+
+
+
+        .input-group {
+
+            margin-bottom: 20px;
+
+        }
+
+
+
+        .input-group label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #c0c0c0;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .input-group input {
+
+            width: 100%;
+
+            padding: 12px;
+
+            border: 2px solid #8a2be2;
+
+            border-radius: 8px;
+
+            background: rgba(0, 0, 0, 0.7);
+
+            color: #e0e0e0;
+
+            font-size: 16px;
+
+            transition: all 0.3s ease;
+
+        }
+
+
+
+        .input-group input:focus {
+
+            outline: none;
+
+            border-color: #c0c0c0;
+
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+
+        }
+
+
+
+        .btn {
+
+            padding: 12px 24px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            margin: 5px;
+
+        }
+
+
+
+        .btn-primary {
+
+            background: linear-gradient(45deg, #8a2be2, #4b0082);
+
+            color: white;
+
+        }
+
+
+
+        .btn-primary:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+
+        }
+
+
+
+        .btn-publish {
+
+            background: #22c55e;
+
+            color: black;
+
+            font-weight: bold;
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .btn-remove {
+
+            background: #ef4444;
+
+            color: black;
+
+            font-weight: bold;
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .btn-escalate {
+
+            background: #fbbf24;
+
+            color: black;
+
+            font-weight: bold;
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .btn-publish:hover,
+        .btn-remove:hover,
+        .btn-escalate:hover {
+
+            transform: translateY(-3px) scale(1.05);
+
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+
+            filter: brightness(1.1);
+
+            animation: glow-pulse 1.5s ease-in-out infinite;
+
+        }
+
+
+
+        @keyframes glow-pulse {
+
+            0%,
+            100% {
+
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 20px currentColor;
+
+            }
+
+            50% {
+
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 30px currentColor, 0 0 40px currentColor;
+
+            }
+
+        }
+
+
+
+        .btn-publish:active,
+        .btn-remove:active,
+        .btn-escalate:active {
+
+            transform: translateY(-1px) scale(1.02);
+
+        }
+
+
+
+        .tabs {
+
+            display: flex;
+
+            margin-bottom: 20px;
+
+            border-bottom: 2px solid #8a2be2;
+
+        }
+
+
+
+        .tab {
+
+            padding: 12px 24px;
+
+            background: rgba(0, 0, 0, 0.5);
+
+            border: none;
+
+            color: #c0c0c0;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            border-top-left-radius: 8px;
+
+            border-top-right-radius: 8px;
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .tab:hover {
+
+            background: rgba(138, 43, 226, 0.3);
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.2);
+
+        }
+
+
+
+        .tab.active {
+
+            background: #8a2be2;
+
+            color: white;
+
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+
+        }
+
+
+
+        .tab::before {
+
+            content: '';
+
+            position: absolute;
+
+            top: 0;
+
+            left: -100%;
+
+            width: 100%;
+
+            height: 100%;
+
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+
+            transition: left 0.5s;
+
+        }
+
+
+
+        .tab:hover::before {
+
+            left: 100%;
+
+        }
+
+
+
+        .tab-content {
+
+            display: none;
+
+        }
+
+
+
+        .tab-content.active {
+
+            display: block;
+
+        }
+
+
+
+        .how-to-play {
+
+            line-height: 1.6;
+
+        }
+
+
+
+        .how-to-play h3 {
+
+            color: #8a2be2;
+
+            margin-top: 20px;
+
+        }
+
+
+
+        .timer {
+
+            background: rgba(0, 0, 0, 0.9);
+
+            border: 2px solid #8a2be2;
+
+            border-radius: 10px;
+
+            padding: 10px 20px;
+
+            font-size: 1.2rem;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .timer.warning {
+
+            border-color: #ef4444;
+
+            animation: timer-warning 0.5s ease-in-out infinite alternate;
+
+        }
+
+
+
+        @keyframes timer-warning {
+
+            0% {
+                background: rgba(239, 68, 68, 0.2);
+            }
+
+            100% {
+                background: rgba(239, 68, 68, 0.4);
+            }
+
+        }
+
+
+
+        .game-hud {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 20px;
+
+            flex-wrap: wrap;
+
+            gap: 15px;
+
+        }
+
+
+
+        .level-indicator {
+
+            background: rgba(138, 43, 226, 0.2);
+
+            border: 2px solid #8a2be2;
+
+            border-radius: 10px;
+
+            padding: 10px 20px;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .score-display {
+
+            background: rgba(0, 0, 0, 0.9);
+
+            border: 2px solid #8a2be2;
+
+            border-radius: 10px;
+
+            padding: 10px 20px;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .lifelines-panel {
+
+            background: rgba(0, 0, 0, 0.9);
+
+            border: 2px solid #8a2be2;
+
+            border-radius: 15px;
+
+            padding: 20px;
+
+            margin-top: 20px;
+
+            max-width: 600px;
+
+            margin-left: auto;
+
+            margin-right: auto;
+
+        }
+
+
+
+        .lifeline {
+
+            display: flex;
+
+            align-items: center;
+
+            margin-bottom: 15px;
+
+            padding: 10px;
+
+            border: 1px solid #8a2be2;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+
+            background: rgba(138, 43, 226, 0.1);
+
+        }
+
+
+
+        .lifeline:hover:not(.used) {
+
+            background: rgba(138, 43, 226, 0.3);
+
+            transform: translateX(-5px);
+
+        }
+
+
+
+        .lifeline.used {
+
+            opacity: 0.5;
+
+            cursor: not-allowed;
+
+            background: rgba(100, 100, 100, 0.2);
+
+        }
+
+
+
+        .lifeline-icon {
+
+            font-size: 1.5rem;
+
+            margin-right: 10px;
+
+        }
+
+
+
+        .lifeline-info {
+
+            flex: 1;
+
+        }
+
+
+
+        .lifeline-name {
+
+            font-weight: bold;
+
+            font-size: 0.9rem;
+
+        }
+
+
+
+        .lifeline-desc {
+
+            font-size: 0.7rem;
+
+            color: #c0c0c0;
+
+        }
+
+
+
+        .lifeline-cost {
+
+            color: #ef4444;
+
+            font-size: 0.8rem;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .question-container {
+
+            text-align: center;
+
+            margin-bottom: 30px;
+
+        }
+
+
+
+        .question-image {
+
+            width: 400px;
+
+            height: 300px;
+
+            border: 3px solid #8a2be2;
+
+            border-radius: 10px;
+
+            margin: 0 auto 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: rgba(0, 0, 0, 0.5);
+
+            font-size: 1.2rem;
+
+            color: #c0c0c0;
+
+        }
+
+
+
+        .scenario {
+
+            background: rgba(138, 43, 226, 0.1);
+
+            border: 1px solid #8a2be2;
+
+            border-radius: 8px;
+
+            padding: 15px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+
+        .quick-tip-container {
+
+            margin-bottom: 20px;
+
+            text-align: center;
+
+        }
+
+
+
+        .quick-tip-btn {
+
+            background: linear-gradient(45deg, #8a2be2, #4b0082);
+
+            color: white;
+
+            border: none;
+
+            border-radius: 20px;
+
+            padding: 10px 20px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            transition: all 0.3s ease;
+
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+
+        }
+
+
+
+        .quick-tip-btn:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+
+        }
+
+
+
+        .quick-tip {
+
+            background: rgba(192, 192, 192, 0.1);
+
+            border: 1px solid #c0c0c0;
+
+            border-radius: 8px;
+
+            padding: 15px;
+
+            margin-top: 15px;
+
+            animation: slideDown 0.3s ease-out;
+
+        }
+
+
+
+        @keyframes slideDown {
+
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+
+
+        .celebration {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            pointer-events: none;
+
+            z-index: 9999;
+
+        }
+
+
+
+        .particle {
+
+            position: absolute;
+
+            width: 12px;
+
+            height: 12px;
+
+            border-radius: 50%;
+
+            animation: particle-burst 3s ease-out forwards;
+
+            box-shadow: 0 0 10px currentColor;
+
+        }
+
+
+
+        @keyframes particle-burst {
+
+            0% {
+
+                transform: scale(0) rotate(0deg) translateY(0);
+
+                opacity: 1;
+
+            }
+
+            25% {
+
+                transform: scale(1.2) rotate(90deg) translateY(-20px);
+
+                opacity: 1;
+
+            }
+
+            50% {
+
+                transform: scale(1) rotate(180deg) translateY(-40px);
+
+                opacity: 0.9;
+
+            }
+
+            75% {
+
+                transform: scale(0.8) rotate(270deg) translateY(-60px);
+
+                opacity: 0.6;
+
+            }
+
+            100% {
+
+                transform: scale(0) rotate(360deg) translateY(-100px);
+
+                opacity: 0;
+
+            }
+
+        }
+
+
+
+        .success-glow {
+
+            position: fixed;
+
+            top: 50%;
+
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            width: 300px;
+
+            height: 300px;
+
+            border-radius: 50%;
+
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.4), rgba(138, 43, 226, 0.2), transparent);
+
+            animation: success-pulse 2s ease-out;
+
+            pointer-events: none;
+
+            z-index: 9998;
+
+            box-shadow: 0 0 50px rgba(34, 197, 94, 0.6);
+
+        }
+
+
+
+        @keyframes success-pulse {
+
+            0% {
+
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+
+                opacity: 0;
+
+                filter: brightness(1);
+
+            }
+
+            25% {
+
+                transform: translate(-50%, -50%) scale(0.5) rotate(90deg);
+
+                opacity: 0.8;
+
+                filter: brightness(1.2);
+
+            }
+
+            50% {
+
+                transform: translate(-50%, -50%) scale(1) rotate(180deg);
+
+                opacity: 1;
+
+                filter: brightness(1.5);
+
+            }
+
+            75% {
+
+                transform: translate(-50%, -50%) scale(1.5) rotate(270deg);
+
+                opacity: 0.6;
+
+                filter: brightness(1.2);
+
+            }
+
+            100% {
+
+                transform: translate(-50%, -50%) scale(2) rotate(360deg);
+
+                opacity: 0;
+
+                filter: brightness(1);
+
+            }
+
+        }
+
+
+
+        .star-burst {
+
+            position: fixed;
+
+            top: 50%;
+
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            font-size: 4rem;
+
+            color: #fbbf24;
+
+            animation: star-burst-anim 2s ease-out forwards;
+
+            pointer-events: none;
+
+            z-index: 9999;
+
+            text-shadow: 0 0 20px currentColor;
+
+        }
+
+
+
+        @keyframes star-burst-anim {
+
+            0% {
+
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+
+                opacity: 0;
+
+            }
+
+            20% {
+
+                transform: translate(-50%, -50%) scale(1.5) rotate(72deg);
+
+                opacity: 1;
+
+            }
+
+            40% {
+
+                transform: translate(-50%, -50%) scale(1.2) rotate(144deg);
+
+                opacity: 1;
+
+            }
+
+            60% {
+
+                transform: translate(-50%, -50%) scale(1.3) rotate(216deg);
+
+                opacity: 0.8;
+
+            }
+
+            80% {
+
+                transform: translate(-50%, -50%) scale(1.1) rotate(288deg);
+
+                opacity: 0.6;
+
+            }
+
+            100% {
+
+                transform: translate(-50%, -50%) scale(0.8) rotate(360deg);
+
+                opacity: 0;
+
+            }
+
+        }
+
+
+
+        @keyframes confetti-fall {
+
+            0% {
+
+                transform: translateY(-10px) rotate(0deg);
+
+                opacity: 1;
+
+            }
+
+            50% {
+
+                transform: translateY(50vh) rotate(180deg);
+
+                opacity: 0.8;
+
+            }
+
+            100% {
+
+                transform: translateY(100vh) rotate(360deg);
+
+                opacity: 0;
+
+            }
+
+        }
+
+
+
+        .result-message {
+
+            text-align: center;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            margin: 20px 0;
+
+            font-size: 1.2rem;
+
+            font-weight: bold;
+
+        }
+
+
+
+        .correct {
+
+            background: rgba(34, 197, 94, 0.2);
+
+            border: 2px solid #22c55e;
+
+            color: #22c55e;
+
+        }
+
+
+
+        .incorrect {
+
+            background: rgba(239, 68, 68, 0.2);
+
+            border: 2px solid #ef4444;
+
+            color: #ef4444;
+
+        }
+
+
+
+        .explanation {
+
+            background: rgba(138, 43, 226, 0.1);
+
+            border: 1px solid #8a2be2;
+
+            border-radius: 8px;
+
+            padding: 15px;
+
+            margin-top: 15px;
+
+            font-size: 1rem;
+
+            line-height: 1.5;
+
+        }
+
+
+
+        .certificate {
+
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+
+            color: black;
+
+            padding: 60px 40px;
+
+            border-radius: 20px;
+
+            text-align: center;
+
+            margin: 20px 0;
+
+            border: 8px solid #8a2be2;
+
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .certificate::before {
+
+            content: '';
+
+            position: absolute;
+
+            top: -50%;
+
+            left: -50%;
+
+            width: 200%;
+
+            height: 200%;
+
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.05) 0%, transparent 70%);
+
+            animation: certificate-glow 4s ease-in-out infinite;
+
+        }
+
+
+
+        @keyframes certificate-glow {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(180deg);
+            }
+
+        }
+
+
+
+        .certificate-content {
+
+            position: relative;
+
+            z-index: 2;
+
+        }
+
+
+
+        .certificate h2 {
+
+            color: #8a2be2;
+
+            font-size: 2.5rem;
+
+            margin-bottom: 10px;
+
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+
+        }
+
+
+
+        .certificate-ornament {
+
+            font-size: 3rem;
+
+            color: #8a2be2;
+
+            margin: 20px 0;
+
+            animation: ornament-pulse 2s ease-in-out infinite;
+
+        }
+
+
+
+        @keyframes ornament-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+        }
+
+
+
+        .modverse-logo {
+
+            font-size: 1.8rem;
+
+            font-weight: bold;
+
+            background: linear-gradient(45deg, #8a2be2, #4b0082);
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+
+            background-clip: text;
+
+            animation: glow-text 2s ease-in-out infinite alternate;
+
+            text-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+
+        }
+
+
+
+        @keyframes glow-text {
+
+            0% {
+                filter: brightness(1);
+            }
+
+            100% {
+                filter: brightness(1.3);
+            }
+
+        }
+
+
+
+        .certificate-field {
+
+            border-bottom: 2px solid #8a2be2;
+
+            display: inline-block;
+
+            min-width: 200px;
+
+            padding: 5px 10px;
+
+            margin: 0 10px;
+
+            font-weight: bold;
+
+            font-size: 1.2rem;
+
+        }
+
+
+
+        .signature-section {
+
+            text-align: right;
+
+            margin-top: 40px;
+
+            padding-right: 40px;
+
+        }
+
+
+
+        .hidden {
+
+            display: none;
+
+        }
+
+
+
+        .progress-bar {
+
+            width: 100%;
+
+            height: 10px;
+
+            background: rgba(0, 0, 0, 0.5);
+
+            border-radius: 5px;
+
+            margin-bottom: 20px;
+
+            overflow: hidden;
+
+        }
+
+
+
+        .progress-fill {
+
+            height: 100%;
+
+            background: linear-gradient(45deg, #8a2be2, #c0c0c0);
+
+            transition: width 0.3s ease;
+
+        }
+
+
+
+        .batman-quote {
+
+            background: rgba(0, 0, 0, 0.8);
+
+            border: 2px solid #333;
+
+            border-radius: 15px;
+
+            padding: 30px;
+
+            margin: 20px 0;
+
+            text-align: center;
+
+            font-style: italic;
+
+            color: #c0c0c0;
+
+        }
+
+
+
+        .batman-quote .quote-text {
+
+            font-size: 1.2rem;
+
+            margin-bottom: 15px;
+
+            line-height: 1.6;
+
+        }
+
+
+
+        .batman-quote .quote-author {
+
+            font-size: 1rem;
+
+            color: #8a2be2;
+
+            font-weight: bold;
+
+        }
+
+
+
+        @media (max-width: 768px) {
+
+            .game-title {
+
+                font-size: 2rem;
+
+            }
+
+
+
+            .question-image {
+
+                width: 300px;
+
+                height: 200px;
+
+            }
+
+
+
+            .lifelines-panel {
+
+                margin-top: 20px;
+
+                padding: 15px;
+
+            }
+
+
+
+            .level-selection {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+
+            .game-hud {
+
+                flex-direction: column;
+
+                align-items: center;
+
+                gap: 10px;
+
+            }
+
+
+
+            .game-hud>div:last-child {
+
+                align-items: center !important;
+
+            }
+
+        }
+    </style>
+
+    <style>
+        @view-transition {
+            navigation: auto;
+        }
+    </style>
+
+    <script src=https://cdn.tailwindcss.com type="text/javascript"></script>
+
+</head>
+
+<body>
+
+    <div class="ai-background"></div>
+
+    <div class="data-streams" id="dataStreams"></div>
+
+    <div class="container">
+
+        <div class="header">
+
+            <div class="ai-orb"></div>
+
+            <h1 class="game-title" id="gameTitle">FotoFunnel Training Course</h1>
+
+            <p class="subtitle">Master Content Moderation Through Progressive Learning</p>
+
+        </div><!-- Welcome Screen -->
+
+        <div id="welcomeScreen" class="screen">
+
+            <div class="tabs"><button class="tab active" onclick="showTab('start')">Start Course</button> <button
+                    class="tab" onclick="showTab('howto')">Course Guideline</button>
+
+            </div>
+
+            <div id="startTab" class="tab-content active">
+
+                <div class="input-group"><label for="username">Enter Your Name:</label> <input type="text" id="username"
+                        placeholder="Your name here..." maxlength="50">
+
+                </div><button class="btn btn-primary" onclick="showLevelSelection()">Begin Training</button>
+
+            </div>
+
+            <div id="howtoTab" class="tab-content">
+
+                <div class="how-to-play">
+
+                    <h3>🎯 Training Overview</h3>
+
+                    <p>Progress through 3 levels of content moderation training, each with increasing complexity and
+                        time pressure.</p>
+
+                    <h3>📚 Level Structure</h3>
+
+                    <p><strong>Level 1 - Foundation:</strong> Basic scenarios (45 seconds each)</p>
+
+                    <p><strong>Level 2 - Intermediate:</strong> Complex cases (60 seconds each)</p>
+
+                    <p><strong>Level 3 - Expert:</strong> Critical decisions (60 seconds each)</p>
+
+                    <h3>🎮 Decision Options</h3>
+
+                    <p><strong>🟢 Publish</strong> - Content meets guidelines</p>
+
+                    <p><strong>🔴 Remove</strong> - Content violates policies</p>
+
+                    <p><strong>⚠️ Escalate</strong> - Requires expert review</p>
+
+                    <h3>🆘 Lifelines (15 points each)</h3>
+
+                    <p><strong>🧠 Smart Hint</strong> - Get expert guidance</p>
+
+                    <p><strong>🎯 Filter Out</strong> - Remove one wrong option</p>
+
+                    <p><strong>👨‍💼 Ask Expert</strong> - Professional insight</p>
+
+                    <h3>🏆 Scoring</h3>
+
+                    <p>• Correct Answer: +10 points</p>
+
+                    <p>• Lifeline Used: -15 points</p>
+
+                    <p>• Passing Score: <span id="passingScoreDisplay">80</span>%</p>
+
+                </div>
+
+            </div>
+
+        </div><!-- Level Selection Screen -->
+
+        <div id="levelScreen" class="screen hidden">
+
+            <h2 style="text-align: center; margin-bottom: 30px;">Choose Your Training Level</h2>
+
+            <div class="level-selection">
+
+                <div class="level-card" onclick="startLevel(1)"><span class="level-icon">🌱</span>
+
+                    <div class="level-title">
+
+                        Level 1: Foundation
+
+                    </div>
+
+                    <div class="level-description">
+
+                        Learn basic content moderation principles with clear-cut scenarios.
+
+                    </div>
+
+                    <div class="level-stats"><span>⏱️ 45s per question</span> <span>📊 10 questions</span> <span>🎯
+                            Easy</span>
+
+                    </div>
+
+                </div>
+
+                <div class="level-card locked" id="level2Card"><span class="level-icon">🔥</span>
+
+                    <div class="level-title">
+
+                        Level 2: Intermediate
+
+                    </div>
+
+                    <div class="level-description">
+
+                        Handle complex scenarios requiring deeper analysis and judgment.
+
+                    </div>
+
+                    <div class="level-stats"><span>⏱️ 60s per question</span> <span>📊 10 questions</span> <span>🎯
+                            Medium</span>
+
+                    </div>
+
+                </div>
+
+                <div class="level-card locked" id="level3Card"><span class="level-icon">⚡</span>
+
+                    <div class="level-title">
+
+                        Level 3: Expert
+
+                    </div>
+
+                    <div class="level-description">
+
+                        Master critical decisions with nuanced, high-stakes content.
+
+                    </div>
+
+                    <div class="level-stats"><span>⏱️ 60s per question</span> <span>📊 10 questions</span> <span>🎯
+                            Critical</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div><!-- Game Screen -->
+
+        <div id="gameScreen" class="screen hidden">
+
+            <div class="game-hud">
+
+                <div class="level-indicator" id="levelIndicator">
+
+                    Level 1: Foundation
+
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+
+                    <div class="score-display" id="scoreDisplay">
+
+                        Score: 0
+
+                    </div>
+
+                    <div class="timer" id="timer">
+
+                        45
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+
+            </div>
+
+            <div class="question-container">
+
+                <h2 id="questionNumber">Question 1 of 10</h2>
+
+                <div class="question-image" id="questionImage">
+
+                    [Content Image Placeholder]
+
+                </div>
+
+                <div class="scenario" id="scenario">
+
+                    Loading scenario...
+
+                </div>
+
+                <div class="quick-tip-container"><button class="quick-tip-btn" id="quickTipBtn"
+                        onclick="toggleQuickTip()"> 💡 Need a hint? Click here </button>
+
+                    <div class="quick-tip hidden" id="quickTip">
+
+                        Loading...
+
+                    </div>
+
+                </div>
+
+                <div class="button-group"><button class="btn btn-publish" onclick="makeDecision('publish')">
+                        Publish</button> <button class="btn btn-remove" onclick="makeDecision('remove')">
+                        Remove</button> <button class="btn btn-escalate" onclick="makeDecision('escalate')">
+                        Escalate</button>
+
+                </div>
+
+            </div>
+
+            <div id="resultMessage" class="result-message hidden"></div>
+
+            <div class="lifelines-panel" id="lifelinesPanel">
+
+                <h4 style="text-align: center; margin-bottom: 15px; color: #8a2be2;">Lifelines</h4>
+
+                <div class="lifeline" id="lifeline-hint" onclick="useLifeline('hint')">
+
+                    <div class="lifeline-icon">
+
+                        🧠
+
+                    </div>
+
+                    <div class="lifeline-info">
+
+                        <div class="lifeline-name">
+
+                            Smart Hint
+
+                        </div>
+
+                        <div class="lifeline-desc">
+
+                            Get expert guidance
+
+                        </div>
+
+                    </div>
+
+                    <div class="lifeline-cost">
+
+                        -15pts
+
+                    </div>
+
+                </div>
+
+                <div class="lifeline" id="lifeline-eliminate" onclick="useLifeline('eliminate')">
+
+                    <div class="lifeline-icon">
+
+                        🎯
+
+                    </div>
+
+                    <div class="lifeline-info">
+
+                        <div class="lifeline-name">
+
+                            Filter Out
+
+                        </div>
+
+                        <div class="lifeline-desc">
+
+                            Remove wrong option
+
+                        </div>
+
+                    </div>
+
+                    <div class="lifeline-cost">
+
+                        -15pts
+
+                    </div>
+
+                </div>
+
+                <div class="lifeline" id="lifeline-expert" onclick="useLifeline('expert')">
+
+                    <div class="lifeline-icon">
+
+                        👨‍💼
+
+                    </div>
+
+                    <div class="lifeline-info">
+
+                        <div class="lifeline-name">
+
+                            Ask Expert
+
+                        </div>
+
+                        <div class="lifeline-desc">
+
+                            Professional insight
+
+                        </div>
+
+                    </div>
+
+                    <div class="lifeline-cost">
+
+                        -15pts
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div><!-- Results Screen -->
+
+        <div id="resultsScreen" class="screen hidden">
+
+            <div class="result-container">
+
+                <h2>Training Assessment Complete</h2>
+
+                <div id="finalResults"></div>
+
+                <div id="failureQuote" class="batman-quote hidden">
+
+                    <div class="quote-text">
+
+                        "Why do we fall, Bruce?"<br>
+
+                        "So that we can learn to pick ourselves up."
+
+                    </div>
+
+                    <div class="quote-author">
+
+                        — Batman 🦇
+
+                    </div>
+
+                </div>
+
+                <div id="certificateSection" class="hidden">
+
+                    <div class="certificate" id="certificate">
+
+                        <div class="certificate-content">
+
+                            <div class="certificate-ornament">
+
+                                🏆
+
+                            </div>
+
+                            <h2 id="certificateTitle">Certificate of Completion</h2>
+
+                            <h3><strong>Reported FotoFunnel Training Course</strong></h3>
+
+                            <div class="certificate-ornament">
+
+                                ✦ ✧ ✦
+
+                            </div>
+
+                            <div style="margin: 40px 0;">
+
+                                <p style="font-size: 1.1rem; margin-bottom: 20px;">This certificate is proudly presented
+                                    to</p>
+
+                                <div class="certificate-field" id="certName">
+
+                                    Username
+
+                                </div>
+
+                                <p style="font-size: 1.1rem; margin-top: 20px;">for successfully completing the content
+                                    moderation training</p>
+
+                            </div>
+
+                            <div style="margin: 30px 0; display: flex; justify-content: space-around; flex-wrap: wrap;">
+
+                                <div style="margin: 10px;"><strong>🏆 Score:</strong><br><span id="certScore"
+                                        style="font-size: 1.3rem; color: #8a2be2;">0</span>%
+
+                                </div>
+
+                                <div style="margin: 10px;"><strong>⏱️ Time Taken:</strong><br><span id="certTime"
+                                        style="font-size: 1.3rem; color: #8a2be2;">0</span>
+
+                                </div>
+
+                                <div style="margin: 10px;"><strong>🧑‍🏫 Evaluator:</strong><br><span
+                                        style="font-size: 1.3rem; color: #8a2be2;">ModVerse</span>
+
+                                </div>
+
+                            </div>
+
+                            <div style="margin: 30px 0;">
+
+                                <p style="font-style: italic; font-size: 1.1rem; color: #666;">💬 "Awesome, now you are
+                                    ready to moderate the content."</p>
+
+                            </div>
+
+                            <div style="margin: 20px 0; font-size: 0.9rem; color: #666;">
+
+                                <p>Include a signature line for "Training Evaluator" and date of completion.</p>
+
+                                <p>ModVerse Academy Certified ✓</p>
+
+                            </div>
+
+                            <div class="signature-section">
+
+                                <p style="margin-bottom: 5px;">Training Evaluator:</p>
+
+                                <div class="modverse-logo">
+
+                                    ModVerse
+
+                                </div>
+
+                                <p style="font-size: 0.9rem; margin-top: 10px;">Date: <span id="certDate">Today</span>
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div><button class="btn btn-primary" onclick="downloadCertificate()">📄 Download
+                        Certificate</button>
+
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;"><button class="btn btn-primary"
+                        onclick="restartGame()">Retake Assessment</button> <button class="btn btn-primary"
+                        onclick="showLevelSelection()" id="nextLevelBtn" style="display: none;">Next Level</button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="celebration hidden" id="celebration"></div>
+
+    <script>
+
+        // Game state
+
+        let currentUser = '';
+
+        let currentLevel = 1;
+
+        let currentQuestion = 0;
+
+        let score = 0;
+
+        let timer = 45;
+
+        let timerInterval;
+
+        let gameStartTime;
+
+        let gameData = [];
+
+        let isAnswered = false;
+
+        let lifelinesUsed = 0;
+
+        let currentQuestions = [];
+
+        let completedLevels = [];
+
+
+
+        // Configuration
+
+        const defaultConfig = {
+
+            course_title: "FotoFunnel Training Course",
+
+            passing_score: "80",
+
+            certificate_title: "Certificate of Completion"
+
+        };
+
+
+
+        // Lifelines
+
+        const lifelines = {
+
+            hint: { used: false, name: "Smart Hint", icon: "🧠", description: "Get an expert tip" },
+
+            eliminate: { used: false, name: "Filter Out", icon: "🎯", description: "Remove wrong option" },
+
+            expert: { used: false, name: "Ask Expert", icon: "👨‍💼", description: "Expert guidance" }
+
+        };
+
+
+
+        // Level 1 Questions (Easy - Clear violations/approvals)
+
+        const level1Questions = [
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://daileyfoods.com/wp-content/uploads/2024/05/4-1024x1024.png" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "A user posted a photo of their homemade meal with appropriate caption.",
+
+                tip: "Food content is generally safe unless it contains inappropriate elements.",
+
+                correct: "publish",
+
+                correctExplanation: "This is appropriate content that follows community guidelines. Food photos are typically safe and engaging content.",
+
+                wrongExplanations: {
+
+                    remove: "This would be incorrect - there's nothing harmful about food photos.",
+
+                    escalate: "No need to escalate simple food content that's clearly appropriate."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider if there's anything harmful or inappropriate about sharing food photos.",
+
+                    eliminate: "remove",
+
+                    expert: "Food content is one of the safest categories - unless there are health claims or inappropriate elements, it should be published."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://templates.fireplugins.com/wp-content/uploads/2020/09/full-age-verification-popup-flipx-in.png" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+
+
+                scenario: "Image contains explicit adult content that clearly violates platform policies.",
+
+                tip: "Adult content should be removed to maintain platform safety.",
+
+                correct: "remove",
+
+                correctExplanation: "Explicit content violates community standards and must be removed to protect users.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing explicit content would violate platform policies and harm user experience.",
+
+                    escalate: "This is clearly inappropriate - no escalation needed for obvious violations."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about platform safety and community standards for explicit material.",
+
+                    eliminate: "publish",
+
+                    expert: "Explicit adult content is always removed - it's a clear policy violation that protects users."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://www.bhphotovideo.com/images/images750x750/datavideo_tg_200_video_production_teacher_s_guide_1672882.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Educational study guide shared by a teacher for students.",
+
+                tip: "Educational content with legitimate purpose is typically allowed.",
+
+                correct: "publish",
+
+                correctExplanation: "Educational content serves a valuable purpose and should be published when appropriate.",
+
+                wrongExplanations: {
+
+                    remove: "Educational content shouldn't be removed unless it contains harmful elements.",
+
+                    escalate: "Clear educational content doesn't need escalation."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the value and purpose of educational materials for learning.",
+
+                    eliminate: "remove",
+
+                    expert: "Educational content is encouraged on platforms as it provides value to users and communities."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://tse3.mm.bing.net/th/id/OIP.znl0xaurRcgca3usrpZxAwHaFN?rs=1&pid=ImgDetMain&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Post contains clear discriminatory language targeting a specific group.",
+
+                tip: "Hate speech and discrimination should always be removed.",
+
+                correct: "remove",
+
+                correctExplanation: "Hate speech creates harm and violates community standards - it must be removed.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing hate speech would cause harm and violate platform policies.",
+
+                    escalate: "Clear hate speech doesn't need escalation - it should be removed immediately."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about the impact of discriminatory content on targeted communities.",
+
+                    eliminate: "publish",
+
+                    expert: "Hate speech is always removed to protect users and maintain a safe community environment."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://tse3.mm.bing.net/th/id/OIP.jS8_G9xwwuurwj2j88dmugAAAA?rs=1&pid=ImgDetMain&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Family vacation photo with no inappropriate elements visible.",
+
+                tip: "Personal photos are usually fine unless they contain violations.",
+
+                correct: "publish",
+
+                correctExplanation: "Appropriate personal content is welcome on social platforms and builds community.",
+
+                wrongExplanations: {
+
+                    remove: "There's no reason to remove appropriate family content.",
+
+                    escalate: "Clear family photos don't need expert review."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider if there's anything harmful about sharing family memories.",
+
+                    eliminate: "remove",
+
+                    expert: "Family photos are core social content - they're encouraged when appropriate and safe."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://live-production.wcms.abc-cdn.net.au/9635477c06f74a08f7ab12e56b1c4e8e?impolicy=wcms_crop_resize&cropH=426&cropW=638&xPos=103&yPos=0&width=862&height=575" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Image shows graphic violence that could disturb viewers.",
+
+                tip: "Graphic violent content should be removed for user safety.",
+
+                correct: "remove",
+
+                correctExplanation: "Graphic violence can be traumatic and violates content policies designed to protect users.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing graphic violence would traumatize users and violate safety policies.",
+
+                    escalate: "Clear graphic violence should be removed immediately, not escalated."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about the psychological impact of violent imagery on users.",
+
+                    eliminate: "publish",
+
+                    expert: "Graphic violence is removed to protect user mental health and comply with safety standards."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://stevens-tate.com/wp-content/uploads/iStock-1492180527-scaled.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Business advertisement following all platform advertising guidelines.",
+
+                tip: "Compliant promotional content is acceptable on most platforms.",
+
+                correct: "publish",
+
+                correctExplanation: "Advertisements that follow guidelines contribute to platform revenue and user discovery.",
+
+                wrongExplanations: {
+
+                    remove: "Compliant ads shouldn't be removed - they support the platform ecosystem.",
+
+                    escalate: "Clear compliant advertising doesn't need escalation."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider whether the advertisement follows platform guidelines and policies.",
+
+                    eliminate: "remove",
+
+                    expert: "Compliant advertising is valuable content that supports both businesses and platform sustainability."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://assets.agentfire3.com/uploads/sites/121/2022/12/Lifestyle-Adopt-Sustainable-Living-Practices-1024x512.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Environmental awareness post encouraging sustainable practices.",
+
+                tip: "Positive social content that benefits society is encouraged.",
+
+                correct: "publish",
+
+                correctExplanation: "Environmental awareness content provides social value and encourages positive behavior.",
+
+                wrongExplanations: {
+
+                    remove: "Positive environmental content shouldn't be removed.",
+
+                    escalate: "Clear positive social content doesn't need escalation."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about the social value and positive impact of environmental awareness.",
+
+                    eliminate: "remove",
+
+                    expert: "Environmental and social awareness content is encouraged as it benefits society."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://th.bing.com/th/id/OIP.q7fSgYOFX7Ryjwus6FNlMAHaEJ?w=321&h=180&c=7&r=0&o=7&pid=1.7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Post promoting the sale of illegal drugs.",
+
+                tip: "Illegal drug content violates laws and platform policies.",
+
+                correct: "remove",
+
+                correctExplanation: "Illegal drug content violates laws and platform policies, and must be removed immediately.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing illegal drug content would violate laws and platform policies.",
+
+                    escalate: "Clear illegal activity should be removed immediately, not escalated."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the legal implications and platform policies regarding illegal substances.",
+
+                    eliminate: "publish",
+
+                    expert: "Illegal drug content is always removed due to legal requirements and user safety concerns."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://th.bing.com/th?id=OIF.lpOc%2flDX6ZDDbJ%2blTJhebg&rs=1&pid=ImgDetMain&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Birthday party celebration with friends and family.",
+
+                tip: "Celebration content brings joy and builds community connections.",
+
+                correct: "publish",
+
+                correctExplanation: "Celebration content is positive, builds community, and enhances user engagement.",
+
+                wrongExplanations: {
+
+                    remove: "There's no reason to remove appropriate celebration content.",
+
+                    escalate: "Clear celebration content doesn't need expert review."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about the positive social value of sharing life celebrations.",
+
+                    eliminate: "remove",
+
+                    expert: "Celebration content is encouraged as it builds positive community connections and engagement."
+
+                }
+
+            }
+
+        ];
+
+
+
+        // Level 2 Questions (Intermediate - Requires more thought)
+
+        const level2Questions = [
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://cdn3.pixelcut.app/pixa_cms/media/624b7366-b11f-47d8-8058-e46893f7a25f_selling_point_2_5a6fa259.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Political satire that may be offensive but doesn't clearly violate rules.",
+
+                tip: "Complex satirical content often needs expert evaluation.",
+
+                correct: "escalate",
+
+                correctExplanation: "Political satire requires careful evaluation to balance free expression with community safety.",
+
+                wrongExplanations: {
+
+                    publish: "Without expert review, potentially offensive content could harm users.",
+
+                    remove: "Removing satirical content without review could suppress legitimate expression."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the balance between free expression and potential harm to users.",
+
+                    eliminate: "remove",
+
+                    expert: "Political satire sits at the intersection of free speech and community safety - expert review ensures the right balance."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://img.freepik.com/premium-photo/abstract-art-piece-symbolizing-gender-equality_950002-645321.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Abstract art piece that some users reported as inappropriate.",
+
+                tip: "Art can be subjective - consider if it truly violates guidelines.",
+
+                correct: "escalate",
+
+                correctExplanation: "Reported artistic content needs expert review to distinguish between legitimate art and violations.",
+
+                wrongExplanations: {
+
+                    publish: "User reports suggest potential issues that should be reviewed by experts.",
+
+                    remove: "Removing art without expert review could suppress legitimate creative expression."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about the subjective nature of art and the importance of expert judgment.",
+
+                    eliminate: "remove",
+
+                    expert: "Art interpretation is subjective - experts can distinguish between legitimate artistic expression and policy violations."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://c8.alamy.com/comp/DB9GJ9/medical-claim-denied-stamp-shows-unsuccessful-medical-reimbursem-DB9GJ9.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Medical information with health claims from an unverified source.",
+
+                tip: "Unverified medical claims can be dangerous and may need expert review.",
+
+                correct: "escalate",
+
+                correctExplanation: "Unverified medical claims require expert evaluation to prevent potential harm to users.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing unverified medical claims could endanger user health.",
+
+                    remove: "Some medical information may be legitimate - expert review is needed."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the potential health risks of unverified medical information.",
+
+                    eliminate: "publish",
+
+                    expert: "Medical claims require verification - experts can assess credibility and potential harm to users."
+
+                }
+
+            },
+
+            {
+
+                 image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://tse3.mm.bing.net/th/id/OIP.4xu5HAzp-NgO-37K11oGLgHaFj?rs=1&pid=ImgDetMain&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Content featuring children that raises privacy and safety concerns.",
+
+                tip: "Child safety is paramount - when in doubt, escalate for expert review.",
+
+                correct: "escalate",
+
+                correctExplanation: "Child safety requires expert evaluation to ensure proper protection and privacy compliance.",
+
+                wrongExplanations: {
+
+                    publish: "Child content with privacy concerns should be reviewed by experts first.",
+
+                    remove: "Some child content may be appropriate - expert review ensures proper assessment."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about child safety, privacy laws, and protection requirements.",
+
+                    eliminate: "publish",
+
+                    expert: "Child safety is our highest priority - experts ensure content meets all protection standards."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://img.freepik.com/free-photo/concept-fake-news_23-2148837005.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Viral conspiracy theory content that spreads misinformation.",
+
+                tip: "Misinformation can cause real harm - consider the impact on public safety.",
+
+                correct: "remove",
+
+                correctExplanation: "Conspiracy theories that spread misinformation should be removed to prevent harm and maintain information integrity.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing misinformation can cause real-world harm and erode trust.",
+
+                    escalate: "Clear misinformation should be removed rather than escalated."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the real-world consequences of spreading false information.",
+
+                    eliminate: "publish",
+
+                    expert: "Misinformation policies are clear - content that spreads false information harmful to public safety should be removed."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://tse4.mm.bing.net/th/id/OIP.5Q94OyHZl5vm_6GU-FL4CAAAAA?rs=1&pid=ImgDetMain&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Investment advice promising unrealistic returns - potential financial scam.",
+
+                tip: "Financial scams can cause serious harm - protect users from fraud.",
+
+                correct: "remove",
+
+                correctExplanation: "Get-rich-quick schemes are typically scams that cause financial harm and should be removed.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing potential scams could cause users to lose money.",
+
+                    escalate: "Clear financial scams should be removed immediately to protect users."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about protecting users from financial fraud and unrealistic promises.",
+
+                    eliminate: "publish",
+
+                    expert: "Financial scam content is removed to protect users from fraud and financial harm."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://tse2.mm.bing.net/th/id/OIP.zKNr3u9eKLGoIeYMmmTz3AHaEQ?w=1050&h=604&rs=1&pid=ImgDetMain&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "News article with disputed facts but from multiple sources.",
+
+                tip: "Disputed information may need fact-checking and expert evaluation.",
+
+                correct: "escalate",
+
+                correctExplanation: "Disputed news content requires expert fact-checking to determine accuracy and appropriate action.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing disputed information without verification could spread misinformation.",
+
+                    remove: "Some disputed content may be legitimate - expert review is needed."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the importance of fact-checking in maintaining information quality.",
+
+                    eliminate: "remove",
+
+                    expert: "Disputed news requires fact-checking expertise to verify accuracy and determine appropriate action."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://www.psychologicalscience.org/redesign/wp-content/uploads/2023/10/Oct23-Trigger-Warnings-Featured-1024x682.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Dark humor content about sensitive topics that may offend some users.",
+
+                tip: "Humor about sensitive topics requires careful consideration of community impact.",
+
+                correct: "escalate",
+
+                correctExplanation: "Dark humor on sensitive topics needs expert review to balance expression with community sensitivity.",
+
+                wrongExplanations: {
+
+                    publish: "Potentially offensive content should be reviewed before publication.",
+
+                    remove: "Some humor may be acceptable - expert judgment is needed."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about balancing creative expression with community sensitivity.",
+
+                    eliminate: "remove",
+
+                    expert: "Sensitive humor requires expert evaluation to balance free expression with community standards."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://embedsocial.com/wp-content/uploads/2021/09/positive-review-examples-hero-768x401.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Product review that appears to be sponsored but lacks proper disclosure.",
+
+                tip: "Sponsored content requires proper disclosure to maintain transparency.",
+
+                correct: "escalate",
+
+                correctExplanation: "Undisclosed sponsored content needs expert review to ensure compliance with advertising standards.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing undisclosed sponsored content violates transparency requirements.",
+
+                    remove: "The content may be fixable with proper disclosure - expert review is needed."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider advertising transparency requirements and user trust.",
+
+                    eliminate: "publish",
+
+                    expert: "Advertising disclosure is legally required - experts can determine if content meets transparency standards."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://tse2.mm.bing.net/th/id/OIP.Z-YyxabxOHM9Wq-4Y0RI2wAAAA?rs=1&pid=ImgDetMain&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+
+                scenario: "Controversial opinion piece that's generating heated debate in comments.",
+
+                tip: "Controversial content may need monitoring even if it doesn't violate policies.",
+
+                correct: "escalate",
+
+                correctExplanation: "Controversial content generating heated debate needs expert monitoring to prevent escalation to harmful behavior.",
+
+                wrongExplanations: {
+
+                    publish: "Content causing heated debate may need monitoring and potential intervention.",
+
+                    remove: "Opinions may be legitimate even if controversial - expert review is needed."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about community management and preventing escalation to harmful behavior.",
+
+                    eliminate: "remove",
+
+                    expert: "Controversial content requires expert monitoring to maintain healthy community discourse."
+
+                }
+
+            }
+
+        ];
+
+
+
+        // Level 3 Questions (Critical - Complex scenarios requiring deep analysis)
+
+        const level3Questions = [
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://researchmethod.net/wp-content/uploads/2022/08/Research_Findings.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Scientific research with controversial findings that contradicts established science, currently undergoing peer review.",
+
+                tip: "Scientific discourse requires careful balance between open inquiry and preventing misinformation.",
+
+                correct: "escalate",
+
+                correctExplanation: "Controversial scientific research requires expert evaluation to distinguish legitimate inquiry from misinformation while supporting scientific discourse.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing unverified controversial science could spread misinformation.",
+
+                    remove: "Legitimate scientific research shouldn't be censored - expert review is needed."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the balance between scientific freedom and preventing misinformation.",
+
+                    eliminate: "remove",
+
+                    expert: "Scientific content requires expertise to evaluate methodology, credibility, and potential for harm while preserving academic freedom."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://tse1.mm.bing.net/th/id/OIP.8C2pIIGykpN9zBsDOSUFggHaE7?w=2560&h=1706&rs=1&pid=ImgDetMain&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Whistleblowing content exposing corporate misconduct that serves public interest but may have legal implications.",
+
+                tip: "Whistleblowing content requires careful legal and ethical consideration.",
+
+                correct: "escalate",
+
+                correctExplanation: "Whistleblowing content requires expert legal and ethical review to balance public interest with potential legal risks.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing without legal review could expose the platform to liability.",
+
+                    remove: "Legitimate whistleblowing serves public interest - expert evaluation is needed."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about the balance between public interest and legal protection.",
+
+                    eliminate: "remove",
+
+                    expert: "Whistleblowing requires legal expertise to assess public interest value against potential legal risks."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://tse2.mm.bing.net/th/id/OIP.gQdKpvt79OHYBhG2TRUCAAHaEO?pid=ImgDet&w=191&h=109&c=7&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Cultural practice that may seem inappropriate from Western perspective but is traditional in the origin culture.",
+
+                tip: "Cultural content requires sensitivity and understanding of different value systems.",
+
+                correct: "escalate",
+
+                correctExplanation: "Cross-cultural content requires expert cultural sensitivity review to avoid imposing one culture's values on another while maintaining safety standards.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing without cultural review could perpetuate harmful practices or cultural insensitivity.",
+
+                    remove: "Removing cultural content without understanding could constitute cultural suppression."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the importance of cultural sensitivity and avoiding cultural imperialism.",
+
+                    eliminate: "remove",
+
+                    expert: "Cultural content requires experts who understand both cultural sensitivity and universal human rights principles."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://tse4.mm.bing.net/th/id/OIP.hHmS-wW28QRDbayH_uOexQHaEj?rs=1&pid=ImgDetMain&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Coordinated harassment campaign targeting a public figure with personal attacks and threats.",
+
+                tip: "Coordinated harassment campaigns cause serious harm and should be stopped immediately.",
+
+                correct: "remove",
+
+                correctExplanation: "Coordinated harassment campaigns cause severe psychological harm and must be removed to protect targets and prevent escalation.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing harassment content enables abuse and causes real harm to targets.",
+
+                    escalate: "Clear harassment campaigns should be removed immediately, not escalated."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about the severe psychological impact of coordinated harassment on targets.",
+
+                    eliminate: "publish",
+
+                    expert: "Harassment campaigns are always removed - they cause documented psychological harm and can escalate to real-world violence."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://tse4.mm.bing.net/th/id/OIP.iVekK45V3QuiL_cJA3l1kQHaFL?rs=1&pid=ImgDetMain&o=7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Mental health discussion including suicide ideation but appears to be seeking support rather than promoting harm.",
+
+                tip: "Mental health content requires careful evaluation to provide support while preventing harm.",
+
+                correct: "escalate",
+
+                correctExplanation: "Mental health content with suicide ideation requires expert evaluation to provide appropriate support while preventing potential harm.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing without expert review could miss opportunities to provide crucial support.",
+
+                    remove: "Removing support-seeking content could prevent someone from getting help they need."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about the critical importance of providing support while preventing harm.",
+
+                    eliminate: "remove",
+
+                    expert: "Mental health experts can distinguish between support-seeking and harmful content, ensuring appropriate intervention."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://th.bing.com/th/id/OIP.TYCvkYNAawP0qyJNINMiVgHaF_?w=207&h=180&c=7&r=0&o=7&pid=1.7&rm=3" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Election information about voting procedures with disputed accuracy that could affect voter participation.",
+
+                tip: "Election information requires highest accuracy standards to protect democratic processes.",
+
+                correct: "escalate",
+
+                correctExplanation: "Election information with disputed accuracy requires expert fact-checking to protect democratic integrity and voter rights.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing inaccurate election information could disenfranchise voters or undermine democracy.",
+
+                    remove: "Some election information may be correctable - expert verification is needed."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the critical importance of accurate election information for democracy.",
+
+                    eliminate: "remove",
+
+                    expert: "Election information requires specialized fact-checking to ensure accuracy and protect democratic processes."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://www.sermo.com/wp-content/uploads/2022/09/cancer-featured-img-2560x1440-min-690x388.png" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Alternative medicine content claiming to cure cancer without scientific evidence, potentially discouraging proven treatments.",
+
+                tip: "Unproven medical claims about serious diseases can cause life-threatening harm.",
+
+                correct: "remove",
+
+                correctExplanation: "Unproven cancer cure claims must be removed as they can cause life-threatening harm by discouraging proven treatments.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing unproven cancer cures could cause people to avoid life-saving treatments.",
+
+                    escalate: "Clear medical misinformation about life-threatening diseases should be removed immediately."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about the life-threatening consequences of discouraging proven medical treatments.",
+
+                    eliminate: "publish",
+
+                    expert: "Unproven medical claims about serious diseases are removed to prevent life-threatening harm to patients."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://img.freepik.com/premium-photo/depiction-jesus39-return-religious-imagery-beliefs-adventists-concept-religious-imagery-bible-prophecy-second-coming-eschatology-adventist-beliefs_918839-98167.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Artistic work using religious imagery in ways that some communities find deeply offensive but others view as legitimate expression.",
+
+                tip: "Religious content requires balancing artistic freedom with respect for deeply held beliefs.",
+
+                correct: "escalate",
+
+                correctExplanation: "Religious artistic content requires expert evaluation to balance artistic freedom with religious sensitivity and community standards.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing without review could deeply offend religious communities and cause conflict.",
+
+                    remove: "Removing artistic expression without review could suppress legitimate creative freedom."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the balance between artistic freedom and religious sensitivity.",
+
+                    eliminate: "remove",
+
+                    expert: "Religious content requires experts who understand both artistic expression rights and religious sensitivity."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://media.cbs8.com/assets/WBIR/images/6415c8c1-478d-4c6e-aa3a-8ed3621ace24/6415c8c1-478d-4c6e-aa3a-8ed3621ace24_1140x641.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Domestic violence awareness campaign with graphic content intended to educate but potentially traumatizing to survivors.",
+
+                tip: "Awareness content must balance education with trauma prevention for survivors.",
+
+                correct: "escalate",
+
+                correctExplanation: "Domestic violence awareness content requires expert review to balance educational value with trauma prevention for survivors.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing graphic content without review could retraumatize survivors.",
+
+                    remove: "Awareness campaigns serve important purposes - expert evaluation is needed."
+
+                },
+
+                lifelines: {
+
+                    hint: "Think about the impact on survivors while considering the educational value.",
+
+                    eliminate: "remove",
+
+                    expert: "Domestic violence content requires trauma-informed expertise to balance awareness with survivor safety."
+
+                }
+
+            },
+
+            {
+
+                image: `<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                            <image href="https://img.freepik.com/premium-photo/future-finance-concept_700248-10502.jpg" width="300" height="200" preserveAspectRatio="xMidYMid slice" />
+  
+                        </svg>`,
+
+                scenario: "Global crisis reporting with conflicting information from different sources that could influence geopolitical tensions.",
+
+                tip: "Crisis information requires careful verification to prevent escalating international tensions.",
+
+                correct: "escalate",
+
+                correctExplanation: "Global crisis content with conflicting reports requires expert verification to prevent misinformation that could escalate international tensions.",
+
+                wrongExplanations: {
+
+                    publish: "Publishing unverified crisis information could escalate geopolitical tensions.",
+
+                    remove: "Crisis information may be important for public awareness - expert verification is needed."
+
+                },
+
+                lifelines: {
+
+                    hint: "Consider the potential for misinformation to escalate international conflicts.",
+
+                    eliminate: "remove",
+
+                    expert: "Global crisis content requires geopolitical expertise to verify accuracy and assess potential for escalating tensions."
+
+                }
+
+            }
+
+        ];
+
+
+
+        // Data SDK handler
+
+        const dataHandler = {
+
+            onDataChanged(data) {
+
+                gameData = data;
+
+                console.log('Game data updated:', data.length, 'records');
+
+            }
+
+        };
+
+
+
+        // Element SDK configuration
+
+        async function onConfigChange(config) {
+
+            const courseTitle = config.course_title || defaultConfig.course_title;
+
+            const passingScore = config.passing_score || defaultConfig.passing_score;
+
+            const certificateTitle = config.certificate_title || defaultConfig.certificate_title;
+
+
+
+            document.getElementById('gameTitle').textContent = courseTitle;
+
+            document.getElementById('passingScoreDisplay').textContent = passingScore;
+
+            document.getElementById('certificateTitle').textContent = certificateTitle;
+
+        }
+
+
+
+        const capabilities = {
+
+            recolorables: [
+
+                {
+
+                    get: () => window.elementSdk?.config?.primary_color || "#8a2be2",
+
+                    set: (value) => {
+
+                        if (window.elementSdk) {
+
+                            window.elementSdk.setConfig({ primary_color: value });
+
+                        }
+
+                    }
+
+                }
+
+            ],
+
+            borderables: [],
+
+            fontEditable: undefined,
+
+            fontSizeable: undefined
+
+        };
+
+
+
+        function mapToEditPanelValues(config) {
+
+            return new Map([
+
+                ["course_title", config.course_title || defaultConfig.course_title],
+
+                ["passing_score", config.passing_score || defaultConfig.passing_score],
+
+                ["certificate_title", config.certificate_title || defaultConfig.certificate_title]
+
+            ]);
+
+        }
+
+
+
+        // Initialize SDKs
+
+        async function initializeSDKs() {
+
+            try {
+
+                if (window.dataSdk) {
+
+                    const result = await window.dataSdk.init(dataHandler);
+
+                    if (!result.isOk) {
+
+                        console.error('Failed to initialize Data SDK');
+
+                    }
+
+                }
+
+
+
+                if (window.elementSdk) {
+
+                    await window.elementSdk.init({
+
+                        defaultConfig,
+
+                        onConfigChange,
+
+                        mapToCapabilities: () => capabilities,
+
+                        mapToEditPanelValues
+
+                    });
+
+                }
+
+            } catch (error) {
+
+                console.error('SDK initialization error:', error);
+
+            }
+
+        }
+
+
+
+        // Initialize data streams animation
+
+        function initDataStreams() {
+
+            const container = document.getElementById('dataStreams');
+
+            for (let i = 0; i < 20; i++) {
+
+                const stream = document.createElement('div');
+
+                stream.className = 'stream';
+
+                stream.style.left = Math.random() * 100 + '%';
+
+                stream.style.animationDelay = Math.random() * 3 + 's';
+
+                stream.style.animationDuration = (2 + Math.random() * 2) + 's';
+
+                container.appendChild(stream);
+
+            }
+
+        }
+
+
+
+        // Tab functionality
+
+        function showTab(tabName) {
+
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+
+
+            event.target.classList.add('active');
+
+            document.getElementById(tabName + 'Tab').classList.add('active');
+
+        }
+
+
+
+        // Show level selection
+
+        function showLevelSelection() {
+
+            const username = document.getElementById('username').value.trim();
+
+            if (!username) {
+
+                showInlineMessage('Please enter your name to continue.', 'error');
+
+                return;
+
+            }
+
+
+
+            currentUser = username;
+
+            document.getElementById('welcomeScreen').classList.add('hidden');
+
+            document.getElementById('levelScreen').classList.remove('hidden');
+
+
+
+            // Update level availability based on completed levels
+
+            updateLevelAvailability();
+
+        }
+
+
+
+        // Update level availability
+
+        function updateLevelAvailability() {
+
+            const level2Card = document.getElementById('level2Card');
+
+            const level3Card = document.getElementById('level3Card');
+
+
+
+            if (completedLevels.includes(1)) {
+
+                level2Card.classList.remove('locked');
+
+                level2Card.onclick = () => startLevel(2);
+
+            }
+
+
+
+            if (completedLevels.includes(2)) {
+
+                level3Card.classList.remove('locked');
+
+                level3Card.onclick = () => startLevel(3);
+
+            }
+
+        }
+
+
+
+        // Start level
+
+        function startLevel(level) {
+
+            if (level > 1 && !completedLevels.includes(level - 1)) {
+
+                showInlineMessage('Complete previous levels first!', 'error');
+
+                return;
+
+            }
+
+
+
+            currentLevel = level;
+
+            currentQuestion = 0;
+
+            score = 0;
+
+            lifelinesUsed = 0;
+
+            gameStartTime = new Date();
+
+
+
+            // Reset lifelines
+
+            Object.keys(lifelines).forEach(key => {
+
+                lifelines[key].used = false;
+
+                document.getElementById(`lifeline-${key}`).classList.remove('used');
+
+            });
+
+
+
+            // Shuffle questions for current level
+
+            const allQuestions = level === 1 ? level1Questions :
+
+                level === 2 ? level2Questions : level3Questions;
+
+            currentQuestions = shuffleArray([...allQuestions]);
+
+
+
+            document.getElementById('levelScreen').classList.add('hidden');
+
+            document.getElementById('gameScreen').classList.remove('hidden');
+
+
+
+            // Update level indicator
+
+            const levelNames = ['', 'Foundation', 'Intermediate', 'Expert'];
+
+            document.getElementById('levelIndicator').textContent = `Level ${level}: ${levelNames[level]}`;
+
+
+
+            loadQuestion();
+
+            startTimer();
+
+        }
+
+
+
+        // Shuffle array
+
+        function shuffleArray(array) {
+
+            for (let i = array.length - 1; i > 0; i--) {
+
+                const j = Math.floor(Math.random() * (i + 1));
+
+                [array[i], array[j]] = [array[j], array[i]];
+
+            }
+
+            return array;
+
+        }
+
+
+
+        // Load question
+
+        function loadQuestion() {
+
+            if (currentQuestion >= currentQuestions.length) {
+
+                endGame();
+
+                return;
+
+            }
+
+
+
+            const question = currentQuestions[currentQuestion];
+
+            isAnswered = false;
+
+
+
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of ${currentQuestions.length}`;
+
+            document.getElementById('questionImage').innerHTML = question.image;
+
+            document.getElementById('scenario').textContent = question.scenario;
+
+            document.getElementById('quickTip').innerHTML = `💡 Quick Tip: ${question.tip}`;
+
+            document.getElementById('quickTip').classList.add('hidden');
+
+            document.getElementById('quickTipBtn').style.display = 'block';
+
+            document.getElementById('resultMessage').classList.add('hidden');
+
+
+
+            // Update progress
+
+            const progress = ((currentQuestion) / currentQuestions.length) * 100;
+
+            document.getElementById('progressFill').style.width = progress + '%';
+
+
+
+            // Reset timer based on level
+
+            timer = currentLevel === 1 ? 45 : 60;
+
+            document.getElementById('timer').textContent = timer;
+
+            document.getElementById('timer').classList.remove('warning');
+
+
+
+            // Reset button states
+
+            document.querySelectorAll('.btn-publish, .btn-remove, .btn-escalate').forEach(btn => {
+
+                btn.style.display = 'inline-block';
+
+                btn.disabled = false;
+
+            });
+
+        }
+
+
+
+        // Start timer
+
+        function startTimer() {
+
+            const timeLimit = currentLevel === 1 ? 45 : 60;
+
+
+
+            timerInterval = setInterval(() => {
+
+                timer--;
+
+                document.getElementById('timer').textContent = timer;
+
+
+
+                // Warning at 1/3 of time remaining
+
+                const warningTime = Math.floor(timeLimit * 0.33);
+
+                if (timer <= warningTime && timer > 0) {
+
+                    document.getElementById('timer').classList.add('warning');
+
+                    if (timer === warningTime) {
+
+                        showTimeWarning();
+
+                    }
+
+                }
+
+
+
+                if (timer <= 0) {
+
+                    clearInterval(timerInterval);
+
+                    if (!isAnswered) {
+
+                        showResult(false, 'Time\'s up! No points awarded.');
+
+                        setTimeout(() => {
+
+                            nextQuestion();
+
+                        }, 3000);
+
+                    }
+
+                }
+
+            }, 1000);
+
+        }
+
+
+
+        // Show time warning
+
+        function showTimeWarning() {
+
+            const warningDiv = document.createElement('div');
+
+            warningDiv.className = 'result-message';
+
+            warningDiv.style.background = 'rgba(239, 68, 68, 0.2)';
+
+            warningDiv.style.border = '2px solid #ef4444';
+
+            warningDiv.style.color = '#ef4444';
+
+            warningDiv.innerHTML = '⏰ Time is running out! Make your decision quickly.';
+
+
+
+            document.querySelector('.question-container').appendChild(warningDiv);
+
+
+
+            setTimeout(() => {
+
+                if (warningDiv.parentNode) {
+
+                    warningDiv.remove();
+
+                }
+
+            }, 3000);
+
+        }
+
+
+
+        // Use lifeline
+
+        function useLifeline(type) {
+
+            if (lifelines[type].used || isAnswered) return;
+
+
+
+            lifelines[type].used = true;
+
+            lifelinesUsed++;
+
+            score = Math.max(0, score - 15); // Deduct 15 points
+
+
+
+            document.getElementById(`lifeline-${type}`).classList.add('used');
+
+            document.getElementById('scoreDisplay').textContent = `Score: ${score}`;
+
+
+
+            const question = currentQuestions[currentQuestion];
+
+
+
+            switch (type) {
+
+                case 'hint':
+
+                    showLifelineResult('Smart Hint', question.lifelines.hint);
+
+                    break;
+
+                case 'eliminate':
+
+                    eliminateWrongOption(question.lifelines.eliminate);
+
+                    showLifelineResult('Filter Out', `Removed the "${question.lifelines.eliminate.toUpperCase()}" option as it's likely incorrect.`);
+
+                    break;
+
+                case 'expert':
+
+                    showLifelineResult('Ask Expert', question.lifelines.expert);
+
+                    break;
+
+            }
+
+        }
+
+
+
+        // Eliminate wrong option
+
+        function eliminateWrongOption(option) {
+
+            const buttons = {
+
+                publish: document.querySelector('.btn-publish'),
+
+                remove: document.querySelector('.btn-remove'),
+
+                escalate: document.querySelector('.btn-escalate')
+
+            };
+
+
+
+            if (buttons[option]) {
+
+                buttons[option].style.display = 'none';
+
+                buttons[option].disabled = true;
+
+            }
+
+        }
+
+
+
+        // Show lifeline result
+
+        function showLifelineResult(lifelineName, message) {
+
+            const lifelineDiv = document.createElement('div');
+
+            lifelineDiv.className = 'result-message';
+
+            lifelineDiv.style.background = 'rgba(138, 43, 226, 0.2)';
+
+            lifelineDiv.style.border = '2px solid #8a2be2';
+
+            lifelineDiv.style.color = '#8a2be2';
+
+            lifelineDiv.innerHTML = `<strong>${lifelineName}:</strong> ${message}`;
+
+
+
+            document.querySelector('.question-container').appendChild(lifelineDiv);
+
+
+
+            setTimeout(() => {
+
+                if (lifelineDiv.parentNode) {
+
+                    lifelineDiv.remove();
+
+                }
+
+            }, 5000);
+
+        }
+
+
+
+        // Make decision
+
+        function makeDecision(choice) {
+
+            if (isAnswered) return;
+
+
+
+            isAnswered = true;
+
+            clearInterval(timerInterval);
+
+
+
+            const question = currentQuestions[currentQuestion];
+
+            const isCorrect = choice === question.correct;
+
+
+
+            if (isCorrect) {
+
+                score += 10;
+
+                showResult(true, 'Excellent! Correct decision made.', question.correctExplanation);
+
+                showCelebration();
+
+            } else {
+
+                const wrongExplanation = question.wrongExplanations[choice];
+
+                showResult(false, `Incorrect. The right answer was "${question.correct.toUpperCase()}".`, wrongExplanation);
+
+            }
+
+
+
+            document.getElementById('scoreDisplay').textContent = `Score: ${score}`;
+
+
+
+            setTimeout(() => {
+
+                nextQuestion();
+
+            }, 4000);
+
+        }
+
+
+
+        // Show result
+
+        function showResult(isCorrect, message, explanation) {
+
+            const resultDiv = document.getElementById('resultMessage');
+
+            resultDiv.innerHTML = `
+
+                <div>${message}</div>
+
+                <div class="explanation">${explanation}</div>
+
+            `;
+
+            resultDiv.className = `result-message ${isCorrect ? 'correct' : 'incorrect'}`;
+
+            resultDiv.classList.remove('hidden');
+
+        }
+
+
+
+        // Show particle celebration
+
+        function showCelebration() {
+
+            const celebrationContainer = document.getElementById('celebration');
+
+            celebrationContainer.classList.remove('hidden');
+
+
+
+            // Create success glow
+
+            const glow = document.createElement('div');
+
+            glow.className = 'success-glow';
+
+            celebrationContainer.appendChild(glow);
+
+
+
+            // Create star burst
+
+            const starBurst = document.createElement('div');
+
+            starBurst.className = 'star-burst';
+
+            starBurst.innerHTML = '⭐';
+
+            celebrationContainer.appendChild(starBurst);
+
+
+
+            // Create multiple star bursts with different delays
+
+            const stars = ['✨', '🌟', '💫', '⭐'];
+
+            for (let i = 0; i < 4; i++) {
+
+                setTimeout(() => {
+
+                    const star = document.createElement('div');
+
+                    star.className = 'star-burst';
+
+                    star.innerHTML = stars[i];
+
+                    star.style.animationDelay = (i * 0.2) + 's';
+
+                    star.style.left = (45 + Math.random() * 10) + '%';
+
+                    star.style.top = (45 + Math.random() * 10) + '%';
+
+                    celebrationContainer.appendChild(star);
+
+                }, i * 200);
+
+            }
+
+
+
+            // Create enhanced particles
+
+            for (let i = 0; i < 40; i++) {
+
+                const particle = document.createElement('div');
+
+                particle.className = 'particle';
+
+
+
+                const centerX = window.innerWidth / 2;
+
+                const centerY = window.innerHeight / 2;
+
+                const angle = (i / 40) * 2 * Math.PI;
+
+                const distance = 80 + Math.random() * 120;
+
+
+
+                particle.style.left = (centerX + Math.cos(angle) * distance) + 'px';
+
+                particle.style.top = (centerY + Math.sin(angle) * distance) + 'px';
+
+                particle.style.backgroundColor = ['#8a2be2', '#22c55e', '#fbbf24', '#74b9ff', '#ff6b6b'][Math.floor(Math.random() * 5)];
+
+                particle.style.animationDelay = Math.random() * 0.8 + 's';
+
+
+
+                celebrationContainer.appendChild(particle);
+
+            }
+
+
+
+            // Add confetti effect
+
+            for (let i = 0; i < 20; i++) {
+
+                setTimeout(() => {
+
+                    const confetti = document.createElement('div');
+
+                    confetti.style.position = 'fixed';
+
+                    confetti.style.left = Math.random() * 100 + '%';
+
+                    confetti.style.top = '-10px';
+
+                    confetti.style.width = '8px';
+
+                    confetti.style.height = '8px';
+
+                    confetti.style.backgroundColor = ['#8a2be2', '#22c55e', '#fbbf24', '#74b9ff', '#ff6b6b'][Math.floor(Math.random() * 5)];
+
+                    confetti.style.animation = 'confetti-fall 3s linear forwards';
+
+                    confetti.style.zIndex = '9999';
+
+
+
+                    celebrationContainer.appendChild(confetti);
+
+                }, i * 100);
+
+            }
+
+
+
+            setTimeout(() => {
+
+                celebrationContainer.classList.add('hidden');
+
+                celebrationContainer.innerHTML = '';
+
+            }, 3000);
+
+        }
+
+
+
+        // Next question
+
+        function nextQuestion() {
+
+            currentQuestion++;
+
+            loadQuestion();
+
+            if (currentQuestion < currentQuestions.length) {
+
+                startTimer();
+
+            }
+
+        }
+
+
+
+        // End game
+
+        async function endGame() {
+
+            document.getElementById('gameScreen').classList.add('hidden');
+
+            document.getElementById('resultsScreen').classList.remove('hidden');
+
+
+
+            const totalQuestions = currentQuestions.length;
+
+            const maxScore = totalQuestions * 10;
+
+            const percentage = Math.round((score / maxScore) * 100);
+
+            const gameEndTime = new Date();
+
+            const timeTaken = Math.round((gameEndTime - gameStartTime) / 1000);
+
+            const passingScore = parseInt(window.elementSdk?.config?.passing_score || defaultConfig.passing_score);
+
+            const passed = percentage >= passingScore;
+
+
+
+            // Save results
+
+            if (window.dataSdk && gameData.length < 999) {
+
+                try {
+
+                    const result = await window.dataSdk.create({
+
+                        username: currentUser,
+
+                        level: currentLevel,
+
+                        score: percentage,
+
+                        total_questions: totalQuestions,
+
+                        completion_time: formatTime(timeTaken),
+
+                        lifelines_used: lifelinesUsed,
+
+                        passed: passed,
+
+                        completed_at: new Date().toISOString()
+
+                    });
+
+
+
+                    if (!result.isOk) {
+
+                        console.error('Failed to save game results');
+
+                    }
+
+                } catch (error) {
+
+                    console.error('Error saving results:', error);
+
+                }
+
+            }
+
+
+
+            let resultsHTML = `
+
+                <h3>Level ${currentLevel} Complete!</h3>
+
+                <p><strong>Final Score:</strong> ${score}/${maxScore} (${percentage}%)</p>
+
+                <p><strong>Time Taken:</strong> ${formatTime(timeTaken)}</p>
+
+                <p><strong>Questions Answered:</strong> ${totalQuestions}</p>
+
+                <p><strong>Lifelines Used:</strong> ${lifelinesUsed}/3 (-${lifelinesUsed * 15} points)</p>
+
+            `;
+
+
+
+            if (passed) {
+
+                resultsHTML += `<p class="correct">🎉 Congratulations! You passed Level ${currentLevel}!</p>`;
+
+
+
+                // Mark level as completed
+
+                if (!completedLevels.includes(currentLevel)) {
+
+                    completedLevels.push(currentLevel);
+
+                }
+
+
+
+                // Show certificate for Level 3 completion
+
+                if (currentLevel === 3) {
+
+                    showCertificate(percentage, formatTime(timeTaken));
+
+                } else {
+
+                    // Show next level button
+
+                    document.getElementById('nextLevelBtn').style.display = 'inline-block';
+
+                    document.getElementById('nextLevelBtn').onclick = () => showLevelSelection();
+
+                }
+
+            } else {
+
+                resultsHTML += `
+
+                    <p class="incorrect">Level ${currentLevel} not passed. You need ${passingScore}% to pass.</p>
+
+                `;
+
+                document.getElementById('failureQuote').classList.remove('hidden');
+
+            }
+
+
+
+            document.getElementById('finalResults').innerHTML = resultsHTML;
+
+        }
+
+
+
+        // Show certificate
+
+        function showCertificate(percentage, timeTaken) {
+
+            document.getElementById('certificateSection').classList.remove('hidden');
+
+            document.getElementById('certName').textContent = currentUser;
+
+            document.getElementById('certScore').textContent = percentage;
+
+            document.getElementById('certTime').textContent = timeTaken;
+
+            document.getElementById('certDate').textContent = new Date().toLocaleDateString();
+
+        }
+
+
+
+        // Download certificate
+
+        function downloadCertificate() {
+
+            if (typeof window.jsPDF === 'undefined') {
+
+                showInlineMessage('PDF generation not available. Please try again.', 'error');
+
+                return;
+
+            }
+
+
+
+            const { jsPDF } = window.jsPDF;
+
+            const doc = new jsPDF('landscape', 'mm', 'a4');
+
+
+
+            // Background and border
+
+            doc.setFillColor(248, 249, 250);
+
+            doc.rect(0, 0, 297, 210, 'F');
+
+
+
+            doc.setDrawColor(138, 43, 226);
+
+            doc.setLineWidth(3);
+
+            doc.rect(10, 10, 277, 190);
+
+
+
+            doc.setDrawColor(138, 43, 226);
+
+            doc.setLineWidth(1);
+
+            doc.rect(15, 15, 267, 180);
+
+
+
+            // Decorative elements
+
+            doc.setFontSize(30);
+
+            doc.setTextColor(138, 43, 226);
+
+            doc.text('🏆', 148, 35, { align: 'center' });
+
+
+
+            // Title
+
+            const certificateTitle = window.elementSdk?.config?.certificate_title || defaultConfig.certificate_title;
+
+            doc.setFontSize(28);
+
+            doc.setFont('helvetica', 'bold');
+
+            doc.setTextColor(138, 43, 226);
+
+            doc.text(certificateTitle, 148, 50, { align: 'center' });
+
+
+
+            // Subtitle
+
+            doc.setFontSize(18);
+
+            doc.setFont('helvetica', 'bold');
+
+            doc.setTextColor(0, 0, 0);
+
+            doc.text('Reported FotoFunnel Training Course', 148, 65, { align: 'center' });
+
+
+
+            // Decorative line
+
+            doc.setDrawColor(138, 43, 226);
+
+            doc.setLineWidth(0.5);
+
+            doc.line(50, 75, 247, 75);
+
+
+
+            // Certificate text
+
+            doc.setFontSize(14);
+
+            doc.setFont('helvetica', 'normal');
+
+            doc.text('This certificate is proudly presented to', 148, 95, { align: 'center' });
+
+
+
+            // Name field with underline
+
+            doc.setFontSize(20);
+
+            doc.setFont('helvetica', 'bold');
+
+            doc.setTextColor(138, 43, 226);
+
+            doc.text(currentUser, 148, 115, { align: 'center' });
+
+            doc.setDrawColor(138, 43, 226);
+
+            doc.setLineWidth(1);
+
+            doc.line(80, 118, 216, 118);
+
+
+
+            doc.setFontSize(14);
+
+            doc.setFont('helvetica', 'normal');
+
+            doc.setTextColor(0, 0, 0);
+
+            doc.text('for successfully completing the content moderation training', 148, 135, { align: 'center' });
+
+
+
+            // Results section
+
+            const percentage = Math.round((score / (currentQuestions.length * 10)) * 100);
+
+            const timeTaken = document.getElementById('certTime').textContent;
+
+            const date = new Date().toLocaleDateString();
+
+
+
+            doc.setFontSize(12);
+
+            doc.text(`🏆 Score: ${percentage}%`, 70, 155);
+
+            doc.text(`⏱️ Time Taken: ${timeTaken}`, 148, 155, { align: 'center' });
+
+            doc.text(`🧑‍🏫 Evaluator: ModVerse`, 226, 155, { align: 'right' });
+
+
+
+            // Quote
+
+            doc.setFont('helvetica', 'italic');
+
+            doc.setTextColor(102, 102, 102);
+
+            doc.text('💬 "Awesome, now you are ready to moderate the content."', 148, 175, { align: 'center' });
+
+
+
+            // Footer
+
+            doc.setFont('helvetica', 'normal');
+
+            doc.setFontSize(10);
+
+            doc.text('Include a signature line for "Training Evaluator" and date of completion.', 148, 185, { align: 'center' });
+
+            doc.text('ModVerse Academy Certified ✓', 148, 190, { align: 'center' });
+
+
+
+            // Signature
+
+            doc.setFont('helvetica', 'bold');
+
+            doc.setFontSize(14);
+
+            doc.setTextColor(138, 43, 226);
+
+            doc.text('ModVerse', 230, 200, { align: 'right' });
+
+            doc.setFont('helvetica', 'normal');
+
+            doc.setFontSize(10);
+
+            doc.setTextColor(0, 0, 0);
+
+            doc.text('Training Evaluator', 230, 195, { align: 'right' });
+
+            doc.text(`Date: ${date}`, 230, 205, { align: 'right' });
+
+
+
+            doc.save(`${currentUser}_FotoFunnel_Training_Certificate.pdf`);
+
+        }
+
+
+
+        // Restart game
+
+        function restartGame() {
+
+            document.getElementById('resultsScreen').classList.add('hidden');
+
+            document.getElementById('levelScreen').classList.remove('hidden');
+
+            document.getElementById('certificateSection').classList.add('hidden');
+
+            document.getElementById('failureQuote').classList.add('hidden');
+
+            document.getElementById('nextLevelBtn').style.display = 'none';
+
+
+
+            // Reset game state
+
+            currentQuestion = 0;
+
+            score = 0;
+
+            lifelinesUsed = 0;
+
+            isAnswered = false;
+
+
+
+            if (timerInterval) {
+
+                clearInterval(timerInterval);
+
+                timerInterval = null;
+
+            }
+
+
+
+            document.getElementById('scoreDisplay').textContent = 'Score: 0';
+
+            document.getElementById('progressFill').style.width = '0%';
+
+
+
+            updateLevelAvailability();
+
+        }
+
+
+
+        // Utility functions
+
+        function formatTime(seconds) {
+
+            const mins = Math.floor(seconds / 60);
+
+            const secs = seconds % 60;
+
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+
+        }
+
+
+
+        function showInlineMessage(message, type) {
+
+            const messageDiv = document.createElement('div');
+
+            messageDiv.className = `result-message ${type === 'error' ? 'incorrect' : 'correct'}`;
+
+            messageDiv.textContent = message;
+
+            messageDiv.style.position = 'fixed';
+
+            messageDiv.style.top = '50%';
+
+            messageDiv.style.left = '50%';
+
+            messageDiv.style.transform = 'translate(-50%, -50%)';
+
+            messageDiv.style.zIndex = '10000';
+
+
+
+            document.body.appendChild(messageDiv);
+
+
+
+            setTimeout(() => {
+
+                if (messageDiv.parentNode) {
+
+                    messageDiv.remove();
+
+                }
+
+            }, 3000);
+
+        }
+
+
+
+        // Toggle quick tip visibility
+
+        function toggleQuickTip() {
+
+            const quickTip = document.getElementById('quickTip');
+
+            const quickTipBtn = document.getElementById('quickTipBtn');
+
+
+
+            if (quickTip.classList.contains('hidden')) {
+
+                quickTip.classList.remove('hidden');
+
+                quickTipBtn.textContent = '💡 Hide hint';
+
+            } else {
+
+                quickTip.classList.add('hidden');
+
+                quickTipBtn.textContent = '💡 Need a hint? Click here';
+
+            }
+
+        }
+
+
+
+        // Initialize everything when page loads
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            initializeSDKs();
+
+            initDataStreams();
+
+        });
+
+    </script>
+
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9959734473d13e0a',t:'MTc2MTY0NDIwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
